@@ -153,6 +153,7 @@ namespace bin {
   V(Socket_Read, 2)                                                            \
   V(Socket_RecvFrom, 1)                                                        \
   V(Socket_SendTo, 6)                                                          \
+  V(Socket_SendCredentials, 1)                                                 \
   V(Socket_SetOption, 4)                                                       \
   V(Socket_SetRawOption, 4)                                                    \
   V(Socket_SetSocketId, 3)                                                     \

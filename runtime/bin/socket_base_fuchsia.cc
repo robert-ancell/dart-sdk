@@ -176,6 +176,12 @@ intptr_t SocketBase::SendTo(intptr_t fd,
   return -1;
 }
 
+intptr_t SocketBase::SendCredentials(intptr_t fd,
+                                     SocketOpKind sync) {
+  errno = ENOSYS;
+  return -1;
+}
+
 intptr_t SocketBase::GetPort(intptr_t fd) {
   IOHandle* handle = reinterpret_cast<IOHandle*>(fd);
   ASSERT(handle->fd() >= 0);

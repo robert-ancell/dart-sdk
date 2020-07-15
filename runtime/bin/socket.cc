@@ -739,6 +739,22 @@ void FUNCTION_NAME(Socket_SendTo)(Dart_NativeArguments args) {
   }
 }
 
+void FUNCTION_NAME(Socket_SendCredentials)(Dart_NativeArguments args) {
+  Socket* socket =
+      Socket::GetSocketIdNativeField(Dart_GetNativeArgument(args, 0));
+  intptr_t bytes_written =
+      SocketBase::SendCredentials(socket->fd(), SocketBase::kAsync);
+  if (bytes_written < 0) {
+    // Extract OSError before we release data, as it may override the error.
+    Dart_Handle error;
+    {
+      OSError os_error;
+      error = DartUtils::NewDartOSError(&os_error);
+    }
+    Dart_ThrowException(error);
+  }
+}
+
 void FUNCTION_NAME(Socket_GetPort)(Dart_NativeArguments args) {
   Socket* socket =
       Socket::GetSocketIdNativeField(Dart_GetNativeArgument(args, 0));

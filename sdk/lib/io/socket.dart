@@ -766,6 +766,12 @@ abstract class RawSocket implements Stream<RawSocketEvent> {
    */
   @Since("2.2")
   void setRawOption(RawSocketOption option);
+
+  /**
+   * FIXME
+   * Add @Since
+   */
+  void sendCredentials();
 }
 
 /**
@@ -867,6 +873,11 @@ abstract class Socket implements Stream<Uint8List>, IOSink {
    * been destroyed or upgraded to a secure socket.
    */
   void setRawOption(RawSocketOption option);
+
+  /**
+   * FIXME
+   */
+  void sendCredentials();
 
   /**
    * The port used by this socket.

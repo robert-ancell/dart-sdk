@@ -741,6 +741,8 @@ class _RawSecureSocket extends Stream<RawSocketEvent>
     _socket.setRawOption(option);
   }
 
+  void sendCredentials() {}
+
   void _eventDispatcher(RawSocketEvent event) {
     try {
       if (event == RawSocketEvent.read) {

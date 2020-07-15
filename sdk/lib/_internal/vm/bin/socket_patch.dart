@@ -1340,6 +1340,10 @@ class _NativeSocket extends _NativeSocketNativeWrapper with _ServiceObject {
     nativeSetRawOption(option.level, option.option, option.value);
   }
 
+  void sendCredentials() {
+    nativeSendCredentials();
+  }
+
   InternetAddress? multicastAddress(
       InternetAddress addr, NetworkInterface? interface) {
     // On Mac OS using the interface index for joining IPv4 multicast groups
@@ -1416,6 +1420,8 @@ class _NativeSocket extends _NativeSocketNativeWrapper with _ServiceObject {
       native "Socket_SetOption";
   void nativeSetRawOption(int level, int option, Uint8List data)
       native "Socket_SetRawOption";
+  void nativeSendCredentials()
+      native "Socket_SendCredentials";
   void nativeJoinMulticast(Uint8List addr, Uint8List? interfaceAddr,
       int interfaceIndex) native "Socket_JoinMulticast";
   void nativeLeaveMulticast(Uint8List addr, Uint8List? interfaceAddr,
@@ -1658,6 +1664,8 @@ class _RawSocket extends Stream<RawSocketEvent> implements RawSocket {
   Uint8List getRawOption(RawSocketOption option) =>
       _socket.getRawOption(option);
   void setRawOption(RawSocketOption option) => _socket.setRawOption(option);
+
+  void sendCredentials() => _socket.sendCredentials();
 
   _pause() {
     _socket.setListening(read: false, write: false);
@@ -1937,6 +1945,12 @@ class _Socket extends Stream<Uint8List> implements Socket {
     final raw = _raw;
     if (raw == null) throw const SocketException.closed();
     raw.setRawOption(option);
+  }
+
+  void sendCredentials() {
+    final raw = _raw;
+    if (raw == null) throw const SocketException.closed();
+    raw.sendCredentials();
   }
 
   int get port {

@@ -140,6 +140,44 @@ intptr_t SocketBase::SendTo(intptr_t fd,
   return written_bytes;
 }
 
+intptr_t SocketBase::SendCredentials(intptr_t fd,
+                                     SocketOpKind sync) {
+  ASSERT(fd >= 0);
+
+  struct msghdr header = {};
+  struct iovec iov[1];
+  char iov_data[1] = { 0 };
+  char buffer[CMSG_SPACE(sizeof(struct ucred))] = { 0 };
+  struct cmsghdr *cmsg;
+  struct ucred *credentials;
+
+  header.msg_iov = iov;
+  header.msg_iovlen = 1;
+  header.msg_control = buffer;
+  header.msg_controllen = sizeof(buffer);
+  iov[0].iov_base = iov_data;
+  iov[0].iov_len = 1;
+  cmsg = CMSG_FIRSTHDR(&header);
+  cmsg->cmsg_level = SOL_SOCKET;
+  cmsg->cmsg_type = SCM_CREDENTIALS;
+  cmsg->cmsg_len = CMSG_LEN(sizeof (struct ucred));
+  credentials = reinterpret_cast<struct ucred*>(CMSG_DATA(cmsg));
+  credentials->pid = getpid();
+  credentials->uid = getuid();
+  credentials->gid = getgid();
+
+  ssize_t written_bytes =
+      TEMP_FAILURE_RETRY(sendmsg(fd, &header, 0));
+  ASSERT(EAGAIN == EWOULDBLOCK);
+  if ((sync == kAsync) && (written_bytes == -1) && (errno == EWOULDBLOCK)) {
+    // If the would block we need to retry and therefore return 0 as
+    // the number of bytes written.
+    written_bytes = 0;
+  }
+
+  return written_bytes;
+}
+
 intptr_t SocketBase::GetPort(intptr_t fd) {
   ASSERT(fd >= 0);
   RawAddr raw;

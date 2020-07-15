@@ -125,6 +125,11 @@ intptr_t SocketBase::SendTo(intptr_t fd,
                         SocketAddress::GetAddrLength(addr));
 }
 
+intptr_t SocketBase::SendCredentials(intptr_t fd,
+                                     SocketOpKind sync) {
+  return -1;
+}
+
 intptr_t SocketBase::GetPort(intptr_t fd) {
   ASSERT(reinterpret_cast<Handle*>(fd)->is_socket());
   SocketHandle* socket_handle = reinterpret_cast<SocketHandle*>(fd);
